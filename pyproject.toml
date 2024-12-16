@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >= 1.13.0"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
@@ -7,7 +7,6 @@ name = "sigmap"
 description = "SigmaP: Python package for predicting sigma70 promoter in Escherichia coli K-12"
 readme = "README.md"
 requires-python = ">=3.7"
-license = "GNU"
 authors = [
     { name = "Goosang Yu", email = "gsyu93@gmail.com" },
 ]
@@ -21,12 +20,12 @@ keywords = [
   "python",
 ]
 classifiers = [
-    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: POSIX",
+    "Operating System :: Unix",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
-    "Operating System :: Unix",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Libraries",
@@ -61,6 +60,7 @@ myModule = [
 [tool.hatch.build.targets.sdist]
 exclude = [
   "/.github",
+  "/tutorial",
 ]
 
 [tool.hatch.build.targets.wheel]

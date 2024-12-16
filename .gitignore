@@ -11,14 +11,11 @@ __pycache__/
 .ipynb_checkpoints/
 
 ## about package
-/genet/models/*/
-/genet/database/metadata/
 /test_datasets/
 
 ## about build
 /build
 /dist
-genet.egg-info
 
 
 ## About test datasets
