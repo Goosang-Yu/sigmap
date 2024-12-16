@@ -10,7 +10,7 @@ import sigmap
 from sigmap.setup import readseq, scanner, designer
 from sigmap.feature import FeatureExtraction
 
-class SigmaPred:
+class SigmaFactor:
     def __init__(self, ):
         
         self.start = time()

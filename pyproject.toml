@@ -40,7 +40,6 @@ classifiers = [
 ]
 dependencies = [
     'pandas',
-    'regex',
     'scikit-learn',
     ]
 dynamic = ["version"]
