@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling >= 1.13.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sigmap"
+description = "SigmaP: Python package for predicting sigma70 promoter in Escherichia coli K-12"
+readme = "README.md"
+requires-python = ">=3.7"
+license = "GNU"
+authors = [
+    { name = "Goosang Yu", email = "gsyu93@gmail.com" },
+]
+keywords = [
+  "bacteria",
+  "promoter",
+  "genetics",
+  "analysis",
+  "machine-learning",
+  "bioinformatics",
+  "python",
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Operating System :: Unix",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    'pandas',
+    'regex',
+    'scikit-learn',
+    ]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/Goosang-Yu/sigmap"
+Repository = "https://github.com/Goosang-Yu/sigmap"
+Source = "https://github.com/Goosang-Yu/sigmap"
+Tracker = "https://github.com/Goosang-Yu/sigmap/issues"
+
+[tool.hatch.version]
+path = "sigmap/__init__.py"
+
+[tool.setuptools.package-data]
+myModule = [
+            'sigmap/model/svc_model_sigma70',
+            ]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.github",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["sigmap"]
