@@ -260,17 +260,17 @@ class FeatureExtraction:
         # alphabet=['A','C','G','T']
         alphabet=['G',]
             
-        for s in self.list_seq:
+        for seq in self.list_seq:
             for i in alphabet:
                 c=0
                 s1=0
                 s2=0
                 j=0
                 o=0
-                while(j<(len(s))):
-                    if(s[j]!=i):
+                while(j<(len(seq))):
+                    if(seq[j]!=i):
                         c=c+1
-                    elif(s[j]==i):
+                    elif(seq[j]==i):
                         o=o+1
                         s1 = (c**2)+s1
                         c=0
@@ -278,7 +278,7 @@ class FeatureExtraction:
                 if(c!=0):
                     s1 = s1+(c**2)
                     c=0
-                s2 = (len(s)-o+1)
+                s2 = (len(seq)-o+1)
                 t = s1/s2
                 if(o==0):
                     ddon["DDON_"+i].append(0.0)
@@ -308,9 +308,10 @@ class FeatureExtraction:
             mer=self.kmer(k,seq)   
             count=0
             for l in range(1,lagvalue+1):
+                motif_len = len(seq)-l-k+1
+
                 for p in range(len(self.phy)):
                     count = count+1
-
                     if count not in selected_feature:
                         continue
 
@@ -318,23 +319,19 @@ class FeatureExtraction:
                     su=0.0
                     su2=0.0
                     
-                    for i in range(len(seq)-l-k+1):
+                    for i in range(motif_len):
                         av += self.temp[mer[i]][p]
-                        
-                    av= av/len(self.list_seq[0])
+                    av= av/len(self.list_seq[0]) # ????? maybe mistake?
                     st = "MAC_"+ str(count)
                     
-                    for i in range(len(seq)-l-k+1):
+                    for i in range(motif_len):
                         pu1 = self.temp[mer[i]][p]-av
                         pu2 = self.temp[mer[i+l]][p]-av
                         su += (pu1*pu2)
                     for i in range(len(seq)-k+1):
                         pu3 = self.temp[mer[i]][p]-av
                         su2 +=(pu3*pu3) 
-                    if (len(seq)-l-k+1)==0:
-                        print("Invalid Sequence Length")
-                        exit()
-                    su = ((1/(len(seq)-l-k+1))*su)/((1/(len(seq)-k+1))*(su2))
+                    su = ((1/(motif_len))*su)/((1/(len(seq)-k+1))*(su2))
                     mac[st].append(su)
         
         mac_df = pd.DataFrame.from_dict(mac)
@@ -358,9 +355,12 @@ class FeatureExtraction:
                     mean += self.temp[j][i]
                 mean = mean/len(seq)
                 pu.append(mean)  
-            mer=self.kmer(k,seq)   
-            count=0
+            mer   = self.kmer(k,seq)   
+            count = 0
             for l in range(1,lagvalue+1):
+
+                motif_len = len(seq)-l-k+1
+
                 for p in range(len(self.phy)):
                     count = count+1
                     if count not in selected_feature:
@@ -368,21 +368,16 @@ class FeatureExtraction:
                     
                     av=0.0
                     su=0.0
-                    for i in range(len(seq)-l-k+1):
+                    for i in range(motif_len):
                         av += self.temp[mer[i]][p]
-                    av= av/len(seq)
-                    
-                    
+                    av = av/len(seq)
                     st = "NMBAC_"+ str(count)
-                    for i in range(len(seq)-l-k+1):
+                    for i in range(motif_len):
                         pu1 = self.temp[mer[i]][p]
                         pu2 = self.temp[mer[i+l]][p]
                         su += (pu1*pu2)**2
                     
-                    if (len(seq)-l-k+1)==0:
-                        print("Invalid Sequence Length")
-                        exit()
-                    su = (su)/(len(seq)-l-k+1)
+                    su = (su)/(motif_len)
                     nmbac[st].append(su)
                     
         nmbac_df = pd.DataFrame.from_dict(nmbac)
@@ -392,7 +387,7 @@ class FeatureExtraction:
     
     def pcpsetnc(self, cdk:pd.DataFrame, kvalue:int=3, wvalue:int=0.05, lmvalue:int=1):
 
-        k    = kvalue
+        k  = kvalue
         rs = self.allp(3) 
         rs.sort()
         ph_v = defaultdict(list)
@@ -407,9 +402,7 @@ class FeatureExtraction:
             if len(s) < k or lmvalue + k > len(s):
                 continue
             mer = self.kmer(3,s)
-            fre=[]
-            for i in rs:
-                fre.append(mer.count(i))
+            fre = [mer.count(i) for i in rs]
             fre_sum = sum(fre)
             fre = [(f/fre_sum) for f in fre]
             
@@ -427,9 +420,11 @@ class FeatureExtraction:
                     temp_sum += temp
                 temp_sum = (temp_sum/(len(s)-i-k+1))
                 theta.append(temp_sum)
+
             t_sum = sum(theta)
             dm = 1 + wvalue*t_sum
             temp_vec =[f/dm for f in fre]
+
             for i in theta:
                 temp_vec.append(wvalue*i/dm)
 
@@ -561,42 +556,27 @@ class FeatureExtraction:
         return (a-t)/(a+t)
 
     def pstnp(self, seq):
-        """
-        Calculate PSTNP values for the given sequence.
-
-        Parameters:
-        - seq (str): Input nucleotide sequence.
-
-        Returns:
-        - list: A list of PSTNP values.
-        """
         return [dict_pstnp[seq[i:i+3]][i] for i in range(79)]
 
     def eiip(self, seq):
         
         dict_val={'A': 0.1260,'C': 0.1335, 'G': 0.0806,'T': 0.1340}
         
-        l1=[]
-        dict2={}
-        dict1={}
+        dict_tmp={}
+        dict_out={}
         dict_pos_tri = make_trimers_dict()
         
         for pat in dict_pos_tri.keys():
-            dict1[pat]=0
-            dict2[pat]=0
+            dict_tmp[pat]=0
+            dict_out[pat]=0
         for i in range(79):
-            var=seq[i]+""+seq[i+1]+""+seq[i+2]
-            dict1[var]+=1
+            var = seq[i:i+3]
+            dict_tmp[var]+=1
         for i in range(79):
+            var = seq[i:i+3]
             etemp=dict_val[seq[i]]+dict_val[seq[i+1]]+dict_val[seq[i+2]]
 
-            #Newly Added
-            var=seq[i]+""+seq[i+1]+""+seq[i+2]
-
-            res=etemp*(dict1[var])/79
-            dict2[var]=res
+            res=etemp*(dict_tmp[var])/79
+            dict_out[var]=res
             
-        for k in dict2:
-            l1.append(dict2[k])
-            
-        return l1
+        return [dict_out[k] for k in dict_out]
