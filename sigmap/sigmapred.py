@@ -84,7 +84,7 @@ class SigmaFactor:
         result = [[self.list_seqID[i],self.list_seq[i],round(val[1],3),y_class[i]] for i, val in enumerate(y_pred)]
         
         df_out = pd.DataFrame(result)
-        df_out.columns = ["ID","Sequence"," Probability Score", "Prediction"]
+        df_out.columns = ["ID","Sequence"," Score", "Prediction"]
         
         return df_out
     

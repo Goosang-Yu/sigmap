@@ -17,7 +17,7 @@ sigma = SigmaFactor()
 df_out = sigma.predict('tutorial/example_seq.fa')
 ```
 
-| ID      | Sequence                                          | Probability Score | Prediction   |
+| ID      | Sequence                                          | Score             | Prediction   |
 | ------- | ------------------------------------------------- | ----------------- | ------------ |
 | \>Seq_1 | TAGCACGACGATAATATAAACGCAGCAAAAAAAAAAAAAAAAAAAA... | 0.145             | Non-Promoter |
 | \>Seq_2 | AGCTTGCGTCAATGGGCAAGGTGGGCTTGCATTTGCTTAATAGAAA... | 0.478             | Promoter     |
