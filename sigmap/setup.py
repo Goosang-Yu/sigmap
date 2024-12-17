@@ -2,30 +2,38 @@ import pandas as pd
 import re
 
 
-def readseq(file, scan=False) -> pd.DataFrame:
+def readseq(input_data, scan=False) -> pd.DataFrame:
     
-    with open(file) as f:
-        records = f.read()
-        
-    records    = records.split('>')[1:]
-    list_seq   = []
-    list_seqid = []
-    
-    for fasta in records:
-        array = fasta.split('\n')
-        name, sequence = array[0].split()[0], re.sub('[^ATGCU-]', '', ''.join(array[1:]).upper())
-        list_seqid.append('>'+name)
-        list_seq.append(sequence)
-        
-    if len(list_seqid) == 0:
-        f = open(file,"r")
-        data1 = f.readlines()
-        for each in data1:
-            list_seq.append(each.replace('\n',''))
-        for i in range (1,len(list_seq)+1):
-            list_seqid.append(">Seq_"+str(i))
+    if type(input_data) == str:
+        with open(input_data) as f:
+            records = f.read()
             
-    final_df = pd.concat([pd.DataFrame(list_seqid),pd.DataFrame(list_seq)], axis=1)
+        records    = records.split('>')[1:]
+        list_seq   = []
+        list_seqid = []
+        
+        for fasta in records:
+            array = fasta.split('\n')
+            name, sequence = array[0].split()[0], re.sub('[^ATGCU-]', '', ''.join(array[1:]).upper())
+            list_seqid.append('>'+name)
+            list_seq.append(sequence)
+            
+        if len(list_seqid) == 0:
+            f = open(input_data,"r")
+            data1 = f.readlines()
+            for each in data1:
+                list_seq.append(each.replace('\n',''))
+            for i in range (1,len(list_seq)+1):
+                list_seqid.append(">Seq_"+str(i))
+                
+        final_df = pd.concat([pd.DataFrame(list_seqid),pd.DataFrame(list_seq)], axis=1)
+    
+    elif type(input_data) == pd.DataFrame:
+        final_df = input_data.iloc[:, :2]
+    
+    else:
+        raise TypeError('Not supported input type.')
+
     final_df.columns = ['Sequence_ID','Sequence']
     
     list_seq_processed = []
@@ -164,7 +172,7 @@ def fasta2df(inFile:str) -> pd.DataFrame:
     
     df = pd.DataFrame()
 
-    df['Sequence'] = seq
     df['Sequence_ID'] = s_id
+    df['Sequence'] = seq
     
     return df
