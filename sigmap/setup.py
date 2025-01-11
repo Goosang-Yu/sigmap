@@ -87,24 +87,25 @@ def scanner(file1) -> pd.DataFrame:
     df_seq = readseq(file1, scan=True)
     bb = seq_pattern(df_seq)
     flat = [x for sublist in bb for x in sublist]
+    
     df2 = pd.DataFrame(flat)
-    cc = []
-    dd = []
-    ee = []
+    list_extra  = []
     for i in range(0,len(df_seq)):
-        cc.append(len(df_seq['Sequence'][i]))
         if len(df_seq['Sequence'][i]) <= 81:
-            dd.append(1)
+            list_extra.append(1)
         else:
-            dd.append(abs(81-len(df_seq['Sequence'][i]))+1)
-    df_seq['length'] = cc
-    df_seq['Extra'] = dd
+            list_extra.append(abs(81-len(df_seq['Sequence'][i]))+1)
+    df_seq['Extra']  = list_extra
+    
+    list_scan_id = []
     for i in range(0,len(df_seq)):
         for j in range(0,df_seq.Extra[i]):
-            ee.append(df_seq.ID[i])
-    df3 = pd.concat([pd.DataFrame(ee),df2],axis=1)
+            list_scan_id.append(df_seq['Sequence_ID'][i] + '_scanpos' + str(j))
+
+    final_df = pd.concat([pd.DataFrame(list_scan_id),df2],axis=1)
+    final_df.columns = ['Sequence_ID','Sequence']
     
-    return df3
+    return final_df
 
 
   
